@@ -1,0 +1,60 @@
+version: '3.4'
+
+x-logging:
+  &default-logging
+  options:
+    max-size: '10m'
+    max-file: '5'
+  driver: json-file
+
+services:
+  imageserver:
+    image: naturalis/imageserver:0.0.1
+    restart: unless-stopped
+    logging: *default-logging
+    ports:
+      - 8080:80
+    labels:
+      - "traefik.backend=naturalis-web"
+      - "traefik.enable=true"
+      - "traefik.port=${TRAEFIK_WEB_PORT:-80}"
+      - "${SITE_URL:-traefik.frontend.rule=Host:images.naturalis.nl}"
+    volumes:
+      - ${BASE_PATH:-/data}/www:${WEB_DOCROOT:-/var/www/html}
+    networks:
+      - default
+      - web
+
+  fpm:
+    image: naturalis/fpm:0.0.1
+    restart: unless-stopped
+    logging: *default-logging
+    volumes:
+      - ${BASE_PATH:-/data}/www:/data
+    networks:
+      - default
+
+  traefik:
+    image: traefik:1.7.12
+    restart: unless-stopped
+    environment:
+      - TRANSIP_PRIVATE_KEY_PATH=/.transip.key
+      - TRANSIP_ACCOUNT_NAME=${TRANSIP_ACCOUNT_NAME:-naturalis}
+    ports:
+      - 80:80
+      - 443:443
+      - 8081:8080
+    networks:
+      - web
+      - default
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${TRAEFIK_TOML_FILE:-./traefik/traefik.toml}:/traefik.toml
+      - ${ACME_JSON:-./acme.json}:/acme.json
+      - ./.transip.key:/.transip.key
+    logging: *default-logging
+
+networks:
+    default:
+    web:
+        external: true
