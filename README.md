@@ -19,6 +19,13 @@ It is started using Foreman which creates:
  - .transip.key
  - acme.json
 
+Configure puppet with adding cronjob entry:
+*/15 * * * * /opt/composeproject/cronscript/copy_uploaded_files.sh >> /var/log/copy_uploaded_files.log
+
+Configure puppet with adding logrotate entry for /var/log/copy_uploaded_files.log
+
+Configure puppet base manifest with imageupload user and add authorised_keys 
+
 The puppet script generates:
 
 running docker-compose project
