@@ -15,10 +15,11 @@ services:
     ports:
       - 8080:80
     labels:
-      - "traefik.backend=naturalis-web"
-      - "traefik.enable=true"
-      - "traefik.port=${TRAEFIK_WEB_PORT:-80}"
-      - "${SITE_URL:-traefik.frontend.rule=Host:images.naturalis.nl}"
+      - traefik.enable=${TRAEFIK_ENABLE:-true}
+      - traefik.http.routers.imageserver.entrypoints=https
+      - traefik.http.routers.imageserver.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-default}
+      - traefik.http.routers.imageserver.tls=true
+      - traefik.http.routers.imageserver.rule=${SITE_URL:-Host(`images.naturalis.nl`)}
     volumes:
       - ${BASE_PATH:-/data}/www:${WEB_DOCROOT:-/var/www/html}
     networks:
@@ -36,24 +37,20 @@ services:
       - default
 
   traefik:
-    image: traefik:1.7.12
+    image: traefik:2.0.1
+    container_name: traefik
     restart: unless-stopped
-    environment:
-      - TRANSIP_PRIVATE_KEY_PATH=/.transip.key
-      - TRANSIP_ACCOUNT_NAME=${TRANSIP_ACCOUNT_NAME:-naturalis}
     ports:
       - 80:80
       - 443:443
       - 8081:8080
     networks:
-      - web
       - default
+      - web
+    logging: *default-logging
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${TRAEFIK_TOML_FILE:-./traefik.toml}:/traefik.toml
-      - ${ACME_JSON:-./acme.json}:/acme.json
-      - ./.transip.key:/.transip.key
-    logging: *default-logging
+      - ./traefik:/etc/traefik
 
 networks:
     default:

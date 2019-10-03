@@ -10,14 +10,12 @@ This puppet script configures a complete docker-compose setup for an imageserver
 consists of:
 
  - nginx
- - traefik
+ - traefik 2
 
 It is started using Foreman which creates:
 
  - .env file
- - traefik.toml
- - .transip.key
- - acme.json
+ - traefik/traefik.toml
 
 Configure puppet with adding cronjob entry:
 */15 * * * * /opt/composeproject/cronscript/copy_uploaded_files.sh >> /var/log/copy_uploaded_files.log
