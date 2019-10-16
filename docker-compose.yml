@@ -36,6 +36,28 @@ services:
     networks:
       - default
 
+  minio:
+    image: "minio/minio:RELEASE.2019-10-12T01-39-57Z"
+    restart: unless-stopped
+    command: "server /data"
+    environment:
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-12345}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-12345678}
+    logging: *default-logging
+    ports:
+      - "9000:9000"
+    volumes: 
+      - "${BASE_PATH:-/data}/ccw:/data"
+      - "${BASE_PATH:-/data}/minioconfig:/root/.minio"
+    networks:
+      - default
+    labels:
+      - traefik.enable=${TRAEFIK_ENABLE:-true}
+      - traefik.http.routers.minio.entrypoints=https
+      - traefik.http.routers.minio.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-default}
+      - traefik.http.routers.minio.tls=true
+      - traefik.http.routers.minio.rule=${MINIO_SITE_URL:-Host(`minio.images.naturalis.nl`)}
+
   traefik:
     image: traefik:2.0.1
     container_name: traefik
