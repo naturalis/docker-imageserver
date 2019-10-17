@@ -5,7 +5,7 @@ IMAGE_ROOT=/data/www/
 TARGET=/data/www/original/
 NOW=$( date +"%Y-%m-%d %H:%M:%S" )
 
-: empty incoming directory, silent exit
+# empty incoming directory, silent exit
 if [ ! "$(ls -A $INCOMING)" ]; then
   exit
 fi
