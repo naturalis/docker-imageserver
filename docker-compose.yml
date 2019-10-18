@@ -47,7 +47,7 @@ services:
     ports:
       - "9000:9000"
     volumes: 
-      - "${BASE_PATH:-/data}/ccw:/data"
+      - "${BASE_PATH:-/data}/incoming:/data"
       - "${BASE_PATH:-/data}/minioconfig:/root/.minio"
     networks:
       - default
