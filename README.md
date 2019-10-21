@@ -11,6 +11,7 @@ consists of:
 
  - nginx
  - traefik 2
+ - minio
 
 It is started using Foreman which creates:
 
@@ -23,6 +24,8 @@ Configure puppet with adding cronjob entry:
 Configure puppet with adding logrotate entry for /var/log/copy_uploaded_files.log
 
 Configure puppet base manifest with imageupload user and add authorised_keys 
+
+Restore of copy originals folder into WEB_DOCROOT folder, default: /data/www and run createdirs.sh script from there. 
 
 The puppet script generates:
 
