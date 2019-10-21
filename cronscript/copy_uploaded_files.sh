@@ -5,11 +5,12 @@ IMAGE_ROOT=/data/www
 TARGET=/data/www/original
 NOW=$( date +"%Y-%m-%d %H:%M:%S" )
 
-# secondary incoming directory is fed by minio file browser
 SECONDARY_INCOMING=/data/incoming/images
 MINUTES=$(date "+%M")
 MINUTES_LAST_DIGIT="${MINUTES:1:1}"
+MINUTES_MOD_FIFTEEN=$(($MINUTES % 15))
 
+# secondary incoming directory is fed by minio file browser
 if [ "$MINUTES_LAST_DIGIT" == "7" ]; then
   # non-empty secondary incoming directory, move files to primary
   if [ "$(ls -A $SECONDARY_INCOMING)" ]; then
@@ -17,6 +18,10 @@ if [ "$MINUTES_LAST_DIGIT" == "7" ]; then
   fi
 fi
 
+# only run every 15 minutes
+if [ ! "$MINUTES_MOD_FIFTEEN" -eq  0 ]; then
+  exit
+fi
 
 # empty incoming directory, silent exit
 if [ ! "$(ls -A $INCOMING)" ]; then
