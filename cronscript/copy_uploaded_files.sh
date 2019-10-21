@@ -14,6 +14,7 @@ MINUTES_MOD_FIFTEEN=$(($MINUTES % 15))
 if [ "$MINUTES_LAST_DIGIT" == "7" ]; then
   # non-empty secondary incoming directory, move files to primary
   if [ "$(ls -A $SECONDARY_INCOMING)" ]; then
+    echo "moving files from minio to incoming"
     mv $SECONDARY_INCOMING/* $INCOMING/
   fi
 fi
