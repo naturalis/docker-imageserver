@@ -8,10 +8,12 @@ NOW=$( date +"%Y-%m-%d %H:%M:%S" )
 SECONDARY_INCOMING=/data/incoming/images
 MINUTES=$(date "+%M")
 MINUTES_LAST_DIGIT="${MINUTES:1:1}"
-MINUTES_MOD_FIFTEEN=$(($MINUTES % 15))
+MINUTES_MOD_FIVE=$(($MINUTES % 5))
 
-# secondary incoming directory is fed by minio file browser
-if [ "$MINUTES_LAST_DIGIT" == "7" ]; then
+TIME_OF_DAY=$(date "+%H:%M")
+READ_SECONDARY_AT="03:00"
+
+if [ "$READ_SECONDARY_AT" == "$TIME_OF_DAY" ]; then
   # non-empty secondary incoming directory, move files to primary
   if [ "$(ls -A $SECONDARY_INCOMING)" ]; then
     echo "moving files from minio to incoming"
@@ -19,12 +21,12 @@ if [ "$MINUTES_LAST_DIGIT" == "7" ]; then
   fi
 fi
 
-# only run every 15 minutes
-if [ ! "$MINUTES_MOD_FIFTEEN" -eq  0 ]; then
+# run every 5 minutes
+if [ ! "$MINUTES_MOD_FIVE" -eq  0 ]; then
   exit
 fi
 
-# empty incoming directory, silent exit
+# if empty incoming directory, silent exit
 if [ ! "$(ls -A $INCOMING)" ]; then
   exit
 fi
