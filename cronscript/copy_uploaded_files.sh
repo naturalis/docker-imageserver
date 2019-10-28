@@ -1,28 +1,15 @@
 #!/bin/bash
 
-INCOMING=/home/imageupload/incoming
+INCOMING=/data/incoming/images
 IMAGE_ROOT=/data/www
 TARGET=/data/www/original
 NOW=$( date +"%Y-%m-%d %H:%M:%S" )
 
-SECONDARY_INCOMING=/data/incoming/images
 MINUTES=$(date "+%M")
-MINUTES_LAST_DIGIT="${MINUTES:1:1}"
-MINUTES_MOD_FIVE=$(($MINUTES % 5))
+MINUTES_MOD_FIFTEEN=$(($MINUTES % 15))
 
-TIME_OF_DAY=$(date "+%H:%M")
-READ_SECONDARY_AT="03:00"
-
-if [ "$READ_SECONDARY_AT" == "$TIME_OF_DAY" ]; then
-  # non-empty secondary incoming directory, move files to primary
-  if [ "$(ls -A $SECONDARY_INCOMING)" ]; then
-    echo "moving files from minio to incoming"
-    mv $SECONDARY_INCOMING/* $INCOMING/
-  fi
-fi
-
-# run every 5 minutes
-if [ ! "$MINUTES_MOD_FIVE" -eq  0 ]; then
+# run every 15 minutes
+if [ ! "$MINUTES_MOD_FIFTEEN" -eq  0 ]; then
   exit
 fi
 
@@ -33,6 +20,7 @@ fi
 
 echo "start $NOW"
 
+# remnant from sFTP-times, maybe replace at some point with an "upload ready"-flag type solution
 if [[ -n $(find $INCOMING/ -name "*.filepart") ]]; then
   echo "found '.filepart' in $INCOMING, file transfer in progress; exiting."
   exit
@@ -57,6 +45,7 @@ find $INCOMING/ -type f | while read f; do
 done
 
 
+# if empty incoming directory after clean up, exit
 if [ ! "$(ls -A $INCOMING)" ]; then
   echo "no files to move; exiting"
   exit
