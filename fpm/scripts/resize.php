@@ -62,8 +62,6 @@ if ($tokens[2] == "w800"){
 
 $image = new Imagick($orig_file);
 
-list($orig_width, $orig_height, $type, $attr) = getimagesize($orig_file);
-
 // Because the exif data is stripped we need to rotate to the right orientation
 $orientation = $image->getImageOrientation();
 switch ($orientation) {
@@ -80,6 +78,9 @@ switch ($orientation) {
 		break;
 }
 $image->setImageOrientation(imagick::ORIENTATION_TOPLEFT);
+
+$orig_width = $image->getImageWidth();
+$orig_height = $image->getImageHeight();
 
  
 # preserve aspect ratio, fitting image to specified box
