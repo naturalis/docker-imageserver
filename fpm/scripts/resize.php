@@ -63,6 +63,24 @@ if ($tokens[2] == "w800"){
 $image = new Imagick($orig_file);
 
 list($orig_width, $orig_height, $type, $attr) = getimagesize($orig_file);
+
+// Because the exif data is stripped we need to rotate to the right orientation
+$orientation = $image->getImageOrientation();
+switch ($orientation) {
+	case imagick::ORIENTATION_BOTTOMRIGHT: 
+		$image->rotateimage("#000", 180); // rotate 180 degrees
+		break;
+
+	case imagick::ORIENTATION_RIGHTTOP:
+		$image->rotateimage("#000", 90); // rotate 90 degrees CW
+		break;
+
+	case imagick::ORIENTATION_LEFTBOTTOM: 
+		$image->rotateimage("#000", -90); // rotate 90 degrees CCW
+		break;
+}
+$image->setImageOrientation(imagick::ORIENTATION_TOPLEFT);
+
  
 # preserve aspect ratio, fitting image to specified box
 if ($mode == "0")
