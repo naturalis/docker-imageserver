@@ -27,7 +27,7 @@ services:
       - web
 
   fpm:
-    image: naturalis/fpm:0.0.1
+    image: naturalis/fpm:0.0.2
     restart: unless-stopped
     logging: *default-logging
     volumes:
