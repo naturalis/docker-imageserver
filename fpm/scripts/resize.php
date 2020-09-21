@@ -104,7 +104,6 @@ if(!file_exists($save_dir))
 
 $image->setImageCompression(imagick::COMPRESSION_JPEG);
 $image->setImageCompressionQuality(80);
-$image->stripImage();
 $image->writeImage($save_path);
 header('Content-type: image/jpg');
 echo file_get_contents($save_path);
